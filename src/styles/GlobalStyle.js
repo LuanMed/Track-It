@@ -13,12 +13,13 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed, 
 figure, figcaption, footer, header, hgroup, 
 menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+time, mark, audio, video, input , button{
 	margin: 0;
 	padding: 0;
 	border: 0;
 	font-size: 100%;
 	font: inherit;
+	font-family: 'Lexend Deca', sans-serif;
 	vertical-align: baseline;
 }
 article, aside, details, figcaption, figure, 
@@ -27,6 +28,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	background-color: #F2F2F2;
 }
 ol, ul {
 	list-style: none;
@@ -44,7 +46,7 @@ table {
 	border-spacing: 0;
 }
 *{
-	box-sizing: border-box;
+	box-sizing: border-box;	
 }
 `
 
