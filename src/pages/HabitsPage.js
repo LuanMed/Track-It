@@ -1,17 +1,23 @@
 import styled from "styled-components";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useContext, useState } from "react";
+import { UserInfoContext } from "../UserInfoContext";
 
 export default function HabitsPage() {
+    const [displayAdd, setDisplayAdd] = useState('none');
+    const [userInfo] = useContext(UserInfoContext)
+    //console.log(userInfo);
+
     return (
         <ContainerHabits>
             <Header/>
             <Main>
                 <MyHabits>
                     <p>Meus hábitos</p>
-                    <button>+</button>
+                    <button onClick={() => setDisplayAdd('flex')}>+</button>
                 </MyHabits>
-                <AddHabits>
+                <AddHabits displayAdd={displayAdd}>
                     <input
                         placeholder="nome do hábito"
                     />
@@ -25,7 +31,7 @@ export default function HabitsPage() {
                     <button>S</button>
                     </Days>
                     <div>
-                        <CancelButton>Cancelar</CancelButton>
+                        <CancelButton onClick={() => setDisplayAdd('none')}>Cancelar</CancelButton>
                         <SaveButton>Salvar</SaveButton>
                     </div>
                 </AddHabits>
@@ -108,7 +114,7 @@ const MyHabits = styled.div`
 `
 
 const AddHabits = styled.div`
-    display: flex;
+    display: ${props => props.displayAdd};
     flex-direction: column;
     justify-content: center;
     width: 100%;

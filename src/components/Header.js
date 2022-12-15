@@ -1,13 +1,17 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { UserInfoContext } from "../UserInfoContext";
 
 export default function Header() {
+    const [userInfo] = useContext(UserInfoContext);
+    
     return (
         <ContainerHeader>
             <Link to={"/habitos"}>
                 <button>TrackIt</button>
             </Link>
-            <img src="https://yt3.ggpht.com/ytc/AMLnZu9tYPIG3bxki2LZz-NRrvHtLHRL0-wW95Cjgcr2=s900-c-k-c0x00ffffff-no-rj" />
+            <img src={userInfo.image} />
         </ContainerHeader>
     )
 }

@@ -45,7 +45,7 @@ export default function RegistrationPage() {
                 <input
                     id="email"
                     type="email"
-                    placeholder="email"
+                    placeholder="email*"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
@@ -55,7 +55,7 @@ export default function RegistrationPage() {
                 <input
                     id="password"
                     type="password"
-                    placeholder="senha"
+                    placeholder="senha*"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
@@ -65,7 +65,7 @@ export default function RegistrationPage() {
                 <input
                     id="name"
                     type="text"
-                    placeholder="nome"
+                    placeholder="nome*"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
@@ -115,7 +115,7 @@ const Form = styled.form`
         width: 303px;
         height: 45px;
         font-size: 20px;
-        color: #D4D4D4;
+        color: #A4A4A4;
         padding-left: 10px;
         border: 1px solid #D5D5D5;
         border-radius: 5px;

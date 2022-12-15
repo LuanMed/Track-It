@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/image/logo.png";
 import { BASE_URL } from "../constants/urls";
 import { ThreeDots } from 'react-loader-spinner';
 import axios from "axios";
+import { UserInfoContext } from "../UserInfoContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [disabled, setDisabled] = useState(false);
     const navigate = useNavigate();
+    const [userInfo, setUserInfo] = useContext(UserInfoContext);
 
     function login(e) {
         e.preventDefault();
@@ -25,10 +27,12 @@ export default function LoginPage() {
             .then(res => {
                 navigate('/hoje');
                 setDisabled(false);
-                console.log(res.data);
+                // console.log(res.data);
+                setUserInfo(res.data);
             })
             .catch(err => {
                 setDisabled(false);
+                setPassword("");
                 alert(err.response.data.message);
             })
     }
@@ -81,7 +85,7 @@ const ContainerLogin = styled.div`
         width: 303px;
         height: 45px;
         font-size: 20px;
-        color: #D4D4D4;
+        color: #A4A4A4;
         padding-left: 10px;
         border: 1px solid #D5D5D5;
         border-radius: 5px;
