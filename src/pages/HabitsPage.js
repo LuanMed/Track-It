@@ -1,17 +1,101 @@
 import styled from "styled-components";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserInfoContext } from "../UserInfoContext";
+import { DAYS } from "../constants/days";
+import { BASE_URL } from "../constants/urls";
+import { ThreeDots } from 'react-loader-spinner';
+import axios from "axios";
 
 export default function HabitsPage() {
     const [displayAdd, setDisplayAdd] = useState('none');
     const [userInfo] = useContext(UserInfoContext)
-    //console.log(userInfo);
+    const [habitName, setHabitName] = useState("");
+    const [selectedDays, setSelectedDays] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+    const [habits, setHabits] = useState([]);
+    const [habitsCounter, setHabitsCounter] = useState([]);
+
+    const config = {
+        headers: {
+            "Authorization": `Bearer ${userInfo.token}`
+        }
+    }
+
+    function hideAddHabits() {
+        setDisplayAdd('none');
+        setHabitName("");
+        setSelectedDays([]);
+    }
+
+    function selectDay(idx) {
+        if (!selectedDays.includes(idx)) {
+            setSelectedDays([...selectedDays, idx]);
+        } else {
+            setSelectedDays(selectedDays.filter(i => i !== idx));
+        }
+    }
+
+    function createHabit() {
+        setDisabled(true);
+
+        const body = {
+            name: habitName,
+            days: selectedDays // segunda, quarta e sexta
+        }
+        if (habitName == "") {
+            alert("Dê um nome para o seu novo hábito.");
+            setDisabled(false);
+            return;
+        }
+        if (selectedDays.length == 0) {
+            alert("Escolha pelo menos um dia em que irá praticar o novo hábito.");
+            setDisabled(false);
+            return;
+        }
+        axios.post(`${BASE_URL}/habits`, body, config)
+            .then(res => {
+                hideAddHabits();
+                setDisabled(false);
+                setHabitsCounter([...habitsCounter, 1]);
+                console.log(res.data);
+            })
+            .catch(err => {
+                setDisabled(false);
+                alert(err.response.data.message)
+            })
+    }
+
+    function deleteHabit(id) {
+        if (window.confirm("Você vai excluir o hábito.")) {
+            axios.delete(`${BASE_URL}/habits/${id}`, config)
+                .then(res => {
+                    console.log(res.data);
+                    setHabitsCounter([...habitsCounter, -1]);
+                })
+                .catch(err => {
+                    alert(err.response.data.message)
+                })
+        }
+    }
+
+    useEffect(() => {
+
+        axios.get(`${BASE_URL}/habits`, config)
+            .then(res => {
+                console.log(res.data);
+                setHabits(res.data);
+
+            })
+            .catch(err => {
+                alert(err.response.data.message)
+            })
+    }, [habitsCounter])
 
     return (
         <ContainerHabits>
-            <Header/>
+            <Header />
             <Main>
                 <MyHabits>
                     <p>Meus hábitos</p>
@@ -19,59 +103,62 @@ export default function HabitsPage() {
                 </MyHabits>
                 <AddHabits displayAdd={displayAdd}>
                     <input
+                        disabled={disabled}
+                        value={habitName}
+                        onChange={(e) => setHabitName(e.target.value)}
                         placeholder="nome do hábito"
                     />
-                    <Days>
-                    <button>D</button>
-                    <button>S</button>
-                    <button>T</button>
-                    <button>Q</button>
-                    <button>Q</button>
-                    <button>S</button>
-                    <button>S</button>
+                    <Days >
+                        {DAYS.map((day, idx) => (
+                            <Button
+                                key={idx}
+                                selectedDays={selectedDays}
+                                idx={idx}
+                                disabled={disabled}
+                                onClick={() => selectDay(idx)}
+                            >
+                                {day}
+                            </Button>
+                        ))}
                     </Days>
-                    <div>
-                        <CancelButton onClick={() => setDisplayAdd('none')}>Cancelar</CancelButton>
-                        <SaveButton>Salvar</SaveButton>
-                    </div>
+                    <ConteinerButtons>
+                        <CancelButton disabled={disabled} onClick={() => setDisplayAdd('none')}>Cancelar</CancelButton>
+                        <SaveButton
+                            disabled={disabled}
+                            onClick={createHabit}>
+                            {!disabled ? 'Salvar' : <ThreeDots color="#FFFFFF" width="50" />}
+                        </SaveButton>
+                    </ConteinerButtons>
                 </AddHabits>
-                {/* <AddHabits>
-                    <input
-                        placeholder="nome do hábito"
-                    />
-                    <Days>
-                    <button>D</button>
-                    <button>S</button>
-                    <button>T</button>
-                    <button>Q</button>
-                    <button>Q</button>
-                    <button>S</button>
-                    <button>S</button>
-                    </Days>
-                    <div>
-                        <CancelButton>Cancelar</CancelButton>
-                        <SaveButton>Salvar</SaveButton>
-                    </div>
-                </AddHabits> */}
-                <Habits>
-                    <p>Ler 1 capítulo do livro</p>
-                    <ion-icon name="trash-outline"></ion-icon>
-                    <div>
-                    <button>D</button>
-                    <button>S</button>
-                    <button>T</button>
-                    <button>Q</button>
-                    <button>Q</button>
-                    <button>S</button>
-                    <button>S</button>
-                    </div>
-
-                </Habits>
-                <p>Você não tem nenhum hábito
-                    cadastrado ainda. Adicione um hábito
-                    para começar a trackear!</p>
+                {habits.length != 0 ?
+                    <>
+                        {habits.map(h =>
+                            <Habits key={h.id}>
+                                <p>{h.name}</p>
+                                <ion-icon onClick={() => deleteHabit(h.id)} name="trash-outline"></ion-icon>
+                                <div>
+                                    {DAYS.map((day, idx) => (
+                                        <ButtonHabits
+                                            key={idx}
+                                            days={h.days}
+                                            idx={idx}
+                                            disabled={disabled}
+                                            onClick={() => selectDay(idx)}
+                                        >
+                                            {day}
+                                        </ButtonHabits>
+                                    ))}
+                                </div>
+                            </Habits>
+                        )}
+                    </>
+                    :
+                    <p>Você não tem nenhum hábito
+                        cadastrado ainda. Adicione um hábito
+                        para começar a trackear!
+                    </p>}
             </Main>
-            <Footer/>
+            <Footer />
         </ContainerHabits>
     )
 }
@@ -94,6 +181,7 @@ const Main = styled.main`
 `
 
 const MyHabits = styled.div`
+    width: 90vw;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -140,15 +228,20 @@ const AddHabits = styled.div`
 
 const Days = styled.div`
     margin-bottom: 35px;
-    button{
+`
+
+const Button = styled.button`
         width: 30px;
         height: 30px;
-        color: #DBDBDB;
-        background-color: #FFFFFF;
+        color: ${props => props.selectedDays.includes(props.idx) ? '#FFFFFF' : '#DBDBDB'};
+        background-color: ${props => props.selectedDays.includes(props.idx) ? '#CFCFCF' : '#FFFFFF'};
         border: 1px solid #D4D4D4;
         border-radius: 5px;
         margin-right: 4px;
-    }
+`
+
+const ConteinerButtons = styled.div`
+    display:flex;
 `
 
 const CancelButton = styled.button`
@@ -158,6 +251,9 @@ const CancelButton = styled.button`
 `
 
 const SaveButton = styled.button`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 84px;
     height: 35px;
     color: #FFFFFF;
@@ -178,18 +274,9 @@ const Habits = styled.div`
     margin-bottom: 28px;
     border-radius: 5px;
     p{
+        font-size: 20px;
         color: #666666;
         margin-bottom: 10px;
-    }
-    button{
-        width: 30px;
-        height: 30px;
-        color: #DBDBDB;
-        background-color: #FFFFFF;
-        border: 1px solid #D4D4D4;
-        border-radius: 5px;
-        margin-right: 4px;
-        cursor: pointer;
     }
     ion-icon{
         position: absolute;
@@ -198,4 +285,14 @@ const Habits = styled.div`
         color: #666666;
 
     }
+`
+
+const ButtonHabits = styled.button`
+    width: 30px;
+    height: 30px;
+    color: ${props => props.days.includes(props.idx) ? '#FFFFFF' : '#DBDBDB'};
+    background-color: ${props => props.days.includes(props.idx) ? '#CFCFCF' : '#FFFFFF'};
+    border: 1px solid #D4D4D4;
+    border-radius: 5px;
+    margin-right: 4px;
 `
