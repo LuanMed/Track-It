@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { UserInfoContext } from "../UserInfoContext";
+import { UserInfoContext } from "../context/UserInfoContext";
 
 export default function Header() {
     const [userInfo] = useContext(UserInfoContext);

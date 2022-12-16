@@ -5,7 +5,7 @@ import logo from "../assets/image/logo.png";
 import { BASE_URL } from "../constants/urls";
 import { ThreeDots } from 'react-loader-spinner';
 import axios from "axios";
-import { UserInfoContext } from "../UserInfoContext";
+import { UserInfoContext } from "../context/UserInfoContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -27,7 +27,6 @@ export default function LoginPage() {
             .then(res => {
                 navigate('/hoje');
                 setDisabled(false);
-                // console.log(res.data);
                 setUserInfo(res.data);
             })
             .catch(err => {

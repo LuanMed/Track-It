@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useContext, useEffect, useState } from "react";
-import { UserInfoContext } from "../UserInfoContext";
+import { UserInfoContext } from "../context/UserInfoContext";
 import { DAYS } from "../constants/days";
 import { BASE_URL } from "../constants/urls";
 import { ThreeDots } from 'react-loader-spinner';
@@ -14,7 +14,7 @@ export default function HabitsPage() {
     const [habitName, setHabitName] = useState("");
     const [selectedDays, setSelectedDays] = useState([]);
     const [disabled, setDisabled] = useState(false);
-    const [habits, setHabits] = useState([]);
+    const [habits, setHabits] = useState(undefined);
     const [habitsCounter, setHabitsCounter] = useState([]);
 
     const config = {
@@ -68,7 +68,7 @@ export default function HabitsPage() {
     }
 
     function deleteHabit(id) {
-        if (window.confirm("Você vai excluir o hábito.")) {
+        if (window.confirm("Você está excluindo o hábito.")) {
             axios.delete(`${BASE_URL}/habits/${id}`, config)
                 .then(res => {
                     console.log(res.data);
@@ -86,7 +86,6 @@ export default function HabitsPage() {
             .then(res => {
                 console.log(res.data);
                 setHabits(res.data);
-
             })
             .catch(err => {
                 alert(err.response.data.message)
@@ -130,33 +129,36 @@ export default function HabitsPage() {
                         </SaveButton>
                     </ConteinerButtons>
                 </AddHabits>
-                {habits.length != 0 ?
+                {habits == undefined ? <ThreeDots color="#52b6ff" width="100" /> :
                     <>
-                        {habits.map(h =>
-                            <Habits key={h.id}>
-                                <p>{h.name}</p>
-                                <ion-icon onClick={() => deleteHabit(h.id)} name="trash-outline"></ion-icon>
-                                <div>
-                                    {DAYS.map((day, idx) => (
-                                        <ButtonHabits
-                                            key={idx}
-                                            days={h.days}
-                                            idx={idx}
-                                            disabled={disabled}
-                                            onClick={() => selectDay(idx)}
-                                        >
-                                            {day}
-                                        </ButtonHabits>
-                                    ))}
-                                </div>
-                            </Habits>
-                        )}
-                    </>
-                    :
-                    <p>Você não tem nenhum hábito
-                        cadastrado ainda. Adicione um hábito
-                        para começar a trackear!
-                    </p>}
+                        {habits.length != 0 ?
+                            <>
+                                {habits.map(h =>
+                                    <Habits key={h.id}>
+                                        <p>{h.name}</p>
+                                        <ion-icon onClick={() => deleteHabit(h.id)} name="trash-outline"></ion-icon>
+                                        <div>
+                                            {DAYS.map((day, idx) => (
+                                                <ButtonHabits
+                                                    key={idx}
+                                                    days={h.days}
+                                                    idx={idx}
+                                                    disabled={disabled}
+                                                    onClick={() => selectDay(idx)}
+                                                >
+                                                    {day}
+                                                </ButtonHabits>
+                                            ))}
+                                        </div>
+                                    </Habits>
+                                )}
+                            </>
+                            :
+                            <p>Você não tem nenhum hábito
+                                cadastrado ainda. Adicione um hábito
+                                para começar a trackear!
+                            </p>}
+                    </>}
             </Main>
             <Footer />
         </ContainerHabits>
@@ -169,6 +171,9 @@ const ContainerHabits = styled.div`
 `
 
 const Main = styled.main`
+display: flex;
+flex-direction: column;
+align-items: center;
     max-width: 360px;
     margin-top: 70px;
     margin-bottom: 100px;
@@ -181,12 +186,12 @@ const Main = styled.main`
 `
 
 const MyHabits = styled.div`
-    width: 90vw;
+    width: 330px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 28px;
-    margin-bottom: 28px;
+    margin-bottom: 35px;
     p{
         font-size: 23px;
         color: #126BA5;
