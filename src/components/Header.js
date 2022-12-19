@@ -7,7 +7,7 @@ export default function Header() {
     const [userInfo] = useContext(UserInfoContext);
     
     return (
-        <ContainerHeader>
+        <ContainerHeader data-test="header">
             <Link to={"/habitos"}>
                 <button>TrackIt</button>
             </Link>

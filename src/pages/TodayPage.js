@@ -27,16 +27,14 @@ export default function TodayPage() {
                 console.log(res.data);
                 setHabits(res.data);
                 const completed = res.data.filter((habit) => habit.done == true);
-                setPercentage(Math.round(completed.length/res.data.length*100));
+                setPercentage(Math.round(completed.length / res.data.length * 100));
             })
             .catch(err => alert(err.response.data.message));
     }, [changed])
 
     function checkHabit(id, done) {
-
-
-
         const body = {};
+
         if (!done) {
             axios.post(`${BASE_URL}/habits/${id}/check`, body, config)
                 .then(res => {
@@ -54,28 +52,28 @@ export default function TodayPage() {
         }
     }
 
-    console.log(percentage)
-
     return (
         <ContainerToday>
             <Header />
             <Main>
                 <Title>
-                    <h2><Date /></h2>
-                    {percentage == 0 ?
-                        <p>Nenhum hábito concluído ainda</p> :
-                        <p><span>{percentage}% dos hábitos concluídos</span></p>
-                    }
+                    <Date />
+                    <p>
+                        {percentage == 0 ?
+                            'Nenhum hábito concluído ainda' :
+                            <span>{percentage}% dos hábitos concluídos</span>
+                        }
+                    </p>
 
                 </Title>
                 {habits == undefined ? <ThreeDots color="#52b6ff" width="100" /> :
                     <>
                         {habits.map(h =>
-                            <Habits key={h.id} done={h.done}>
-                                <h3>{h.name}</h3>
-                                <p>Sequência atual: <Current done={h.done}>{h.currentSequence} {h.currentSequence !== 1 ? "dias" : "dia"} </Current><br />
-                                    Seu recorde: <Record id={h.id} current={h.currentSequence} highest={h.highestSequence}>{h.highestSequence} {h.highestSequence !== 1 ? "dias" : "dia"}</Record></p>
-                                <ion-icon onClick={() => checkHabit(h.id, h.done)} name="checkbox"></ion-icon>
+                            <Habits data-test="today-habit-container" key={h.id} done={h.done}>
+                                <h3 data-test="today-habit-name">{h.name}</h3>
+                                <p>Sequência atual: <Current data-test="today-habit-sequence" done={h.done}>{h.currentSequence} {h.currentSequence !== 1 ? "dias" : "dia"} </Current></p>
+                                <p>Seu recorde: <Record data-test="today-habit-record" id={h.id} done={h.done} current={h.currentSequence} highest={h.highestSequence}>{h.highestSequence} {h.highestSequence !== 1 ? "dias" : "dia"}</Record></p>
+                                <ion-icon data-test="today-habit-check-btn" onClick={() => checkHabit(h.id, h.done)} name="checkbox"></ion-icon>
                             </Habits>
                         )}
                     </>}
@@ -151,5 +149,5 @@ const Current = styled.span`
 `
 
 const Record = styled.span`
-    color: ${props => props.current == props.highest && props.highest != 0 ? '#8FC549' : '#666666'};
+    color: ${props => props.current == props.highest && props.done ? '#8FC549' : '#666666'};
 `

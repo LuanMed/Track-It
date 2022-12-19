@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/image/logo.png";
 import { BASE_URL } from "../constants/urls";
-import { ThreeDots } from  'react-loader-spinner';
+import { ThreeDots } from 'react-loader-spinner';
 
 export default function RegistrationPage() {
     const [email, setEmail] = useState("");
@@ -29,7 +29,7 @@ export default function RegistrationPage() {
             .then(res => {
                 navigate('/');
                 setDisabled(false);
-    
+
             })
             .catch(err => {
                 setDisabled(false);
@@ -43,6 +43,7 @@ export default function RegistrationPage() {
             <Form onSubmit={register}>
                 <label htmlFor="email"></label>
                 <input
+                    data-test="email-input"
                     id="email"
                     type="email"
                     placeholder="email*"
@@ -53,6 +54,7 @@ export default function RegistrationPage() {
                 />
                 <label htmlFor="password"></label>
                 <input
+                    data-test="password-input"
                     id="password"
                     type="password"
                     placeholder="senha*"
@@ -63,6 +65,7 @@ export default function RegistrationPage() {
                 />
                 <label htmlFor="name"></label>
                 <input
+                    data-test="user-name-input"
                     id="name"
                     type="text"
                     placeholder="nome*"
@@ -73,6 +76,7 @@ export default function RegistrationPage() {
                 />
                 <label htmlFor="image"></label>
                 <input
+                    data-test="user-image-input"
                     id="image"
                     type="url"
                     placeholder="foto"
@@ -80,10 +84,14 @@ export default function RegistrationPage() {
                     onChange={e => setImage(e.target.value)}
                     disabled={disabled}
                 />
-                <button type="submit" disabled={disabled}>{!disabled ? 'Cadastrar' : <ThreeDots color="#FFFFFF" width="70"/>}</button>
+                <button
+                    data-test="signup-btn"
+                    type="submit"
+                    disabled={disabled}>
+                    {!disabled ? 'Cadastrar' : <ThreeDots color="#FFFFFF" width="70" />}</button>
             </Form>
             <Link to={'/'}>
-                <p>Já tem uma conta? Faça login!</p>
+                <p data-test="login-link">Já tem uma conta? Faça login!</p>
             </Link>
         </ContainerLogin>
     )

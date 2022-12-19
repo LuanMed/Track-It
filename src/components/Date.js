@@ -29,8 +29,8 @@ export default function Date() {
     }
 
     return (
-        <>
+        <h2 data-test="today">
             {day}, {$D}/{$M+1}
-        </>
+        </h2>
     )
 }

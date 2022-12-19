@@ -42,6 +42,7 @@ export default function LoginPage() {
             <Form onSubmit={login}>
                 <label htmlFor="email"></label>
                 <input
+                    data-test="email-input"
                     id="email"
                     type="email"
                     placeholder="email"
@@ -52,6 +53,7 @@ export default function LoginPage() {
                 />
                 <label htmlFor="password"></label>
                 <input
+                    data-test="password-input"
                     id="password"
                     type="password"
                     placeholder="senha"
@@ -60,12 +62,15 @@ export default function LoginPage() {
                     required
                     disabled={disabled}
                 />
-                <button type="submit" disabled={disabled}>
+                <button
+                    data-test="login-btn"
+                    type="submit"
+                    disabled={disabled}>
                     {!disabled ? 'Entrar' : <ThreeDots color="#FFFFFF" width="70" />}
                 </button>
             </Form>
             <Link to={'/cadastro'}>
-                <p>Não tem uma conta? Cadastre-se!</p>
+                <p data-test="signup-link">Não tem uma conta? Cadastre-se!</p>
             </Link>
         </ContainerLogin>
     )

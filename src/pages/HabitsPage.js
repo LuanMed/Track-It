@@ -98,10 +98,11 @@ export default function HabitsPage() {
             <Main>
                 <MyHabits>
                     <p>Meus hábitos</p>
-                    <button onClick={() => setDisplayAdd('flex')}>+</button>
+                    <button data-test="habit-create-btn" onClick={() => setDisplayAdd('flex')}>+</button>
                 </MyHabits>
-                <AddHabits displayAdd={displayAdd}>
+                <AddHabits data-test="habit-create-container" displayAdd={displayAdd}>
                     <input
+                        data-test="habit-name-input"
                         disabled={disabled}
                         value={habitName}
                         onChange={(e) => setHabitName(e.target.value)}
@@ -110,6 +111,7 @@ export default function HabitsPage() {
                     <Days >
                         {DAYS.map((day, idx) => (
                             <Button
+                                data-test="habit-day"
                                 key={idx}
                                 selectedDays={selectedDays}
                                 idx={idx}
@@ -121,8 +123,14 @@ export default function HabitsPage() {
                         ))}
                     </Days>
                     <ConteinerButtons>
-                        <CancelButton disabled={disabled} onClick={() => setDisplayAdd('none')}>Cancelar</CancelButton>
+                        <CancelButton
+                            data-test="habit-create-cancel-btn"
+                            disabled={disabled}
+                            onClick={() => setDisplayAdd('none')}>
+                            Cancelar
+                        </CancelButton>
                         <SaveButton
+                            data-test="habit-create-save-btn"
                             disabled={disabled}
                             onClick={createHabit}>
                             {!disabled ? 'Salvar' : <ThreeDots color="#FFFFFF" width="50" />}
@@ -134,17 +142,16 @@ export default function HabitsPage() {
                         {habits.length != 0 ?
                             <>
                                 {habits.map(h =>
-                                    <Habits key={h.id}>
-                                        <p>{h.name}</p>
-                                        <ion-icon onClick={() => deleteHabit(h.id)} name="trash-outline"></ion-icon>
+                                    <Habits data-test="habit-container" key={h.id}>
+                                        <p data-test="habit-name">{h.name}</p>
+                                        <ion-icon data-test="habit-delete-btn" onClick={() => deleteHabit(h.id)} name="trash-outline"></ion-icon>
                                         <div>
                                             {DAYS.map((day, idx) => (
                                                 <ButtonHabits
+                                                    data-test="habit-day"
                                                     key={idx}
                                                     days={h.days}
                                                     idx={idx}
-                                                    disabled={disabled}
-                                                    onClick={() => selectDay(idx)}
                                                 >
                                                     {day}
                                                 </ButtonHabits>
@@ -243,6 +250,7 @@ const Button = styled.button`
         border: 1px solid #D4D4D4;
         border-radius: 5px;
         margin-right: 4px;
+        cursor: pointer;
 `
 
 const ConteinerButtons = styled.div`
@@ -253,6 +261,7 @@ const CancelButton = styled.button`
     color: #52B6FF;
     background-color: #FFFFFF;
     margin-left: 115px;
+    cursor: pointer;
 `
 
 const SaveButton = styled.button`
@@ -265,6 +274,7 @@ const SaveButton = styled.button`
     background-color: #52B6FF;
     border-radius: 5px;
     margin-left: 20px;
+    cursor: pointer;
 `
 
 const Habits = styled.div`
